@@ -44,3 +44,9 @@ def _milestone_dict(milestone: Milestone) -> dict[str, str | int]:
         "weekday": milestone.weekday,
     }
 
+def _profile_dict(profile: Profile) -> dict[str, str]:
+    return {
+        "name": profile.name,
+        "birthdate": profile.birthdate.isoformat(),
+        "created_at": profile.created_at.isoformat(),
+    }
