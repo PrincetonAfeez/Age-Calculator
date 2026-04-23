@@ -104,3 +104,18 @@ def _ordinal(value: int) -> str:
     suffix = "th" if 10 <= value % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(value % 10, "th")
     return f"{value}{suffix}"
 
+def _birthday_stream(birthdate: date, reference: date) -> Iterator[Milestone]:
+    years_old = max(0, reference.year - birthdate.year)
+    while True:
+        target_year = birthdate.year + years_old
+        target = _birthday_in_year(birthdate, target_year)
+        if target > reference:
+            yield Milestone(
+                label=f"{_ordinal(years_old)} birthday",
+                target_date=target,
+                days_until=(target - reference).days,
+                weekday=day_of_week(target),
+            )
+        years_old += 1
+
+
