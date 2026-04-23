@@ -50,3 +50,33 @@ def _profile_dict(profile: Profile) -> dict[str, str]:
         "birthdate": profile.birthdate.isoformat(),
         "created_at": profile.created_at.isoformat(),
     }
+
+class PlainFormatter:
+    def format_age(self, age: Age) -> str:
+        return f"Age: {age:ymd} ({age:days} days, {age:seconds} seconds)"
+
+    def format_diff(self, age: Age) -> str:
+        return f"Difference: {age:ymd} ({age:days} days)"
+
+    def format_milestones(self, milestones: Sequence[Milestone]) -> str:
+        if not milestones:
+            return "No milestones found."
+        lines = ["Upcoming milestones:"]
+        for milestone in milestones:
+            lines.append(
+                "- "
+                f"{milestone.label}: {milestone.target_date.isoformat()} "
+                f"({milestone.weekday}, in {milestone.days_until} days)"
+            )
+        return "\n".join(lines)
+
+    def format_profile(self, profile: Profile) -> str:
+        return f"{profile.name}: born {profile.birthdate.isoformat()}"
+
+    def format_profiles(self, profiles: Sequence[Profile]) -> str:
+        if not profiles:
+            return "No profiles saved."
+        return "\n".join(self.format_profile(profile) for profile in profiles)
+
+    def format_message(self, message: str) -> str:
+        return message
