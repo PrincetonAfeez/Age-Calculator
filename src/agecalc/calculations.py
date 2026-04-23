@@ -65,3 +65,27 @@ def _add_months(start: date, months: int) -> date:
     day = min(start.day, monthrange(year, month)[1])
     return date(year, month, day)
 
+@validate_not_future
+def age_at(birthdate: date, reference: date | None = None) -> Age:
+    resolved_reference = reference if reference is not None else current_reference_date()
+    years = resolved_reference.year - birthdate.year
+    anniversary = _birthday_in_year(birthdate, birthdate.year + years)
+
+    if anniversary > resolved_reference:
+        years -= 1
+        anniversary = _birthday_in_year(birthdate, birthdate.year + years)
+
+    months = 0
+    cursor = anniversary
+    while True:
+        candidate = _add_months(cursor, 1)
+        if candidate > resolved_reference:
+            break
+        months += 1
+        cursor = candidate
+
+    days = (resolved_reference - cursor).days
+    total_seconds = (resolved_reference - birthdate).days * SECONDS_PER_DAY
+    return Age(years=years, months=months, days=days, total_seconds=total_seconds)
+
+
