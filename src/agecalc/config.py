@@ -11,3 +11,10 @@ DEFAULT_CONFIG_PATH = DEFAULT_CONFIG_DIR / "config.toml"
 DEFAULT_DATABASE_PATH = DEFAULT_CONFIG_DIR / "profiles.sqlite3"
 
 
+@dataclass(frozen=True)
+class Config:
+    preferred_date_format: str = "iso"
+    output_format: str = "plain"
+    reference_timezone: str = "UTC"
+    database_path: Path = DEFAULT_DATABASE_PATH
+
