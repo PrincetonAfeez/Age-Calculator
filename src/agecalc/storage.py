@@ -50,3 +50,25 @@ class InMemoryProfileRepository(ProfileRepository):
             raise UnknownProfileError(msg)
         del self._profiles[key]
 
+class SQLiteProfileRepository(ProfileRepository):
+    def __init__(self, database_path: Path) -> None:
+        self._database_path = database_path.expanduser()
+        self._database_path.parent.mkdir(parents=True, exist_ok=True)
+        self._ensure_schema()
+
+    def _connect(self) -> sqlite3.Connection:
+        connection = sqlite3.connect(self._database_path)
+        connection.row_factory = sqlite3.Row
+        return connection
+
+    def _ensure_schema(self) -> None:
+        with self._connect() as connection:
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS profiles (
+                    name TEXT PRIMARY KEY,
+                    birthdate TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                )
+                """
+            )
