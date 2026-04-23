@@ -27,3 +27,49 @@ class _StrptimeParser:
         except ValueError as exc:
             msg = f"{raw_value!r} is not a valid {self.name} date."
             raise InvalidDateError(msg) from exc
+
+
+class ISOParser(_StrptimeParser):
+    def __init__(self) -> None:
+        super().__init__(name="iso", pattern="%Y-%m-%d")
+
+
+class USParser(_StrptimeParser):
+    def __init__(self) -> None:
+        super().__init__(name="us", pattern="%m/%d/%Y")
+
+
+class EUParser(_StrptimeParser):
+    def __init__(self) -> None:
+        super().__init__(name="eu", pattern="%d/%m/%Y")
+
+
+class ParserRegistry:
+    def __init__(self, parsers: list[DateParser]) -> None:
+        if not parsers:
+            msg = "ParserRegistry needs at least one parser."
+            raise ValueError(msg)
+        self._parsers = parsers
+
+    @property
+    def parsers(self) -> tuple[DateParser, ...]:
+        return tuple(self._parsers)
+
+    def parse(self, raw_value: str) -> date:
+        cleaned = raw_value.strip()
+        matches: dict[str, date] = {}
+        for parser in self._parsers:
+            try:
+                matches[parser.name] = parser.parse(cleaned)
+            except InvalidDateError:
+                continue
+
+        if not matches:
+            msg = f"Could not parse {raw_value!r} as ISO, US, or EU date."
+            raise InvalidDateError(msg)
+
+        unique_dates = set(matches.values())
+        if len(unique_dates) > 1:
+            raise AmbiguousDateError(raw_value, matches)
+
+        return next(iter(unique_dates))
