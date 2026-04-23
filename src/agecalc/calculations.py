@@ -100,3 +100,7 @@ class Milestone:
     days_until: int
     weekday: str
 
+def _ordinal(value: int) -> str:
+    suffix = "th" if 10 <= value % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(value % 10, "th")
+    return f"{value}{suffix}"
+
