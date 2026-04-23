@@ -60,3 +60,24 @@ def _from_tuple(
         raise InvalidDateError(msg) from exc
     return age_at(birthdate, reference)
 
+def normalize_birthdate(value: object, registry: ParserRegistry | None = None) -> date:
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+    if isinstance(value, str):
+        active_registry = registry if registry is not None else default_registry()
+        return active_registry.parse(value)
+    if isinstance(value, tuple):
+        if len(value) != 3:
+            msg = "Tuple birthdates must be in (year, month, day) form."
+            raise InvalidDateError(msg)
+        try:
+            year, month, day = (int(part) for part in value)
+            return date(year, month, day)
+        except (TypeError, ValueError) as exc:
+            msg = f"Tuple {value!r} is not a valid date."
+            raise InvalidDateError(msg) from exc
+
+    msg = f"Cannot parse a birthdate from {type(value).__name__}."
+    raise InvalidDateError(msg)
