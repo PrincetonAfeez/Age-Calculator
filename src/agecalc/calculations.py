@@ -51,3 +51,10 @@ def validate_not_future(func: F) -> F:
         return func(birthdate, resolved_reference, *args, **kwargs)
 
     return cast(F, wrapper)
+
+def _birthday_in_year(birthdate: date, year: int) -> date:
+    try:
+        return birthdate.replace(year=year)
+    except ValueError:
+        return date(year, 2, 28)
+
