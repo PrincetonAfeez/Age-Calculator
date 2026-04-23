@@ -103,3 +103,7 @@ class JSONFormatter:
     def format_message(self, message: str) -> str:
         return json.dumps({"message": message}, indent=2)
 
+def formatter_for(name: str) -> OutputFormatter:
+    if name == "json":
+        return JSONFormatter()
+    return PlainFormatter()
