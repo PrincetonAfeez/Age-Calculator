@@ -32,3 +32,22 @@ def reference_date(value: date) -> Iterator[None]:
     finally:
         _REFERENCE_DATE.reset(token)
 
+
+def validate_not_future(func: F) -> F:
+    @wraps(func)
+    def wrapper(
+        birthdate: date,
+        reference: date | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> object:
+        resolved_reference = reference if reference is not None else current_reference_date()
+        if birthdate > resolved_reference:
+            msg = (
+                f"Birthdate {birthdate.isoformat()} is after reference date "
+                f"{resolved_reference.isoformat()}."
+            )
+            raise FutureBirthDateError(msg)
+        return func(birthdate, resolved_reference, *args, **kwargs)
+
+    return cast(F, wrapper)
