@@ -27,3 +27,10 @@ def _from_string(
     active_registry = registry if registry is not None else default_registry()
     return age_at(active_registry.parse(value), reference)
 
+@create_age.register
+def _from_date(
+    value: date,
+    reference: date | None = None,
+    registry: ParserRegistry | None = None,
+) -> Age:
+    return age_at(value, reference)
