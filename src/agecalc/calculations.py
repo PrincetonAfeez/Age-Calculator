@@ -89,3 +89,7 @@ def age_at(birthdate: date, reference: date | None = None) -> Age:
     return Age(years=years, months=months, days=days, total_seconds=total_seconds)
 
 
+@lru_cache(maxsize=2048)
+def day_of_week(value: date) -> str:
+    return value.strftime("%A")
+
