@@ -1,3 +1,5 @@
+"""Repository abstractions and implementations."""
+
 from __future__ import annotations
 
 import sqlite3
@@ -10,6 +12,8 @@ from agecalc.exceptions import UnknownProfileError
 
 
 class ProfileRepository(ABC):
+    """Repository interface for saved profiles."""
+
     @abstractmethod
     def save(self, profile: Profile) -> None:
         raise NotImplementedError
@@ -26,7 +30,10 @@ class ProfileRepository(ABC):
     def delete(self, name: str) -> None:
         raise NotImplementedError
 
+
 class InMemoryProfileRepository(ProfileRepository):
+    """Fast repository for tests and dependency injection examples."""
+
     def __init__(self) -> None:
         self._profiles: dict[str, Profile] = {}
 
@@ -50,7 +57,10 @@ class InMemoryProfileRepository(ProfileRepository):
             raise UnknownProfileError(msg)
         del self._profiles[key]
 
+
 class SQLiteProfileRepository(ProfileRepository):
+    """SQLite-backed profile repository."""
+
     def __init__(self, database_path: Path) -> None:
         self._database_path = database_path.expanduser()
         self._database_path.parent.mkdir(parents=True, exist_ok=True)
@@ -121,6 +131,7 @@ class SQLiteProfileRepository(ProfileRepository):
 
     @staticmethod
     def _row_to_profile(row: sqlite3.Row) -> Profile:
+        """Convert a SQLite row to a Profile."""
         return Profile(
             name=str(row["name"]),
             birthdate=date.fromisoformat(str(row["birthdate"])),
