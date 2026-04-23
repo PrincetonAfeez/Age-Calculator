@@ -1,3 +1,5 @@
+"""Test the parsing module."""
+
 from datetime import date
 
 import pytest
