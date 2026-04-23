@@ -43,4 +43,20 @@ def _from_datetime(
 ) -> Age:
     return age_at(value.date(), reference)
 
+@create_age.register(tuple)
+def _from_tuple(
+    value: tuple[Any, ...],
+    reference: date | None = None,
+    registry: ParserRegistry | None = None,
+) -> Age:
+    if len(value) != 3:
+        msg = "Tuple birthdates must be in (year, month, day) form."
+        raise InvalidDateError(msg)
+    try:
+        year, month, day = (int(part) for part in value)
+        birthdate = date(year, month, day)
+    except (TypeError, ValueError) as exc:
+        msg = f"Tuple {value!r} is not a valid date."
+        raise InvalidDateError(msg) from exc
+    return age_at(birthdate, reference)
 
