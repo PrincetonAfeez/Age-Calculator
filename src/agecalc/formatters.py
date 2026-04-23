@@ -80,3 +80,26 @@ class PlainFormatter:
 
     def format_message(self, message: str) -> str:
         return message
+
+class JSONFormatter:
+    def format_age(self, age: Age) -> str:
+        return json.dumps({"age": _age_dict(age)}, indent=2)
+
+    def format_diff(self, age: Age) -> str:
+        return json.dumps({"difference": _age_dict(age)}, indent=2)
+
+    def format_milestones(self, milestones: Sequence[Milestone]) -> str:
+        return json.dumps(
+            {"milestones": [_milestone_dict(milestone) for milestone in milestones]},
+            indent=2,
+        )
+
+    def format_profile(self, profile: Profile) -> str:
+        return json.dumps({"profile": _profile_dict(profile)}, indent=2)
+
+    def format_profiles(self, profiles: Sequence[Profile]) -> str:
+        return json.dumps({"profiles": [_profile_dict(profile) for profile in profiles]}, indent=2)
+
+    def format_message(self, message: str) -> str:
+        return json.dumps({"message": message}, indent=2)
+
