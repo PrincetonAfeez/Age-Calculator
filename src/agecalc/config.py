@@ -1,3 +1,5 @@
+"""Configuration loading using pathlib and tomllib."""
+
 from __future__ import annotations
 
 import tomllib
@@ -18,6 +20,7 @@ class Config:
     reference_timezone: str = "UTC"
     database_path: Path = DEFAULT_DATABASE_PATH
 
+
 def load_config(path: Path = DEFAULT_CONFIG_PATH) -> Config:
     config_path = path.expanduser()
     if not config_path.exists():
@@ -35,6 +38,7 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> Config:
         reference_timezone=str(data.get("reference_timezone", "UTC")),
         database_path=database_path,
     )
+
 
 def today_in_timezone(timezone_name: str) -> date:
     active_timezone: tzinfo
