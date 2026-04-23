@@ -73,3 +73,12 @@ class ParserRegistry:
             raise AmbiguousDateError(raw_value, matches)
 
         return next(iter(unique_dates))
+
+def default_registry(preferred: str = "iso") -> ParserRegistry:
+    parser_map: dict[str, DateParser] = {
+        "iso": ISOParser(),
+        "us": USParser(),
+        "eu": EUParser(),
+    }
+    ordered_names = [preferred, *[name for name in ("iso", "us", "eu") if name != preferred]]
+    return ParserRegistry([parser_map[name] for name in ordered_names if name in parser_map])
