@@ -93,3 +93,10 @@ def age_at(birthdate: date, reference: date | None = None) -> Age:
 def day_of_week(value: date) -> str:
     return value.strftime("%A")
 
+@dataclass(frozen=True)
+class Milestone:
+    label: str
+    target_date: date
+    days_until: int
+    weekday: str
+
