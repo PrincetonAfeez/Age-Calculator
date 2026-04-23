@@ -72,3 +72,57 @@ class SQLiteProfileRepository(ProfileRepository):
                 )
                 """
             )
+
+    def save(self, profile: Profile) -> None:
+        with self._connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO profiles (name, birthdate, created_at)
+                VALUES (?, ?, ?)
+                ON CONFLICT(name) DO UPDATE SET
+                    birthdate = excluded.birthdate,
+                    created_at = excluded.created_at
+                """,
+                (
+                    profile.name,
+                    profile.birthdate.isoformat(),
+                    profile.created_at.isoformat(),
+                ),
+            )
+
+    def get(self, name: str) -> Profile:
+        with self._connect() as connection:
+            row = connection.execute(
+                "SELECT name, birthdate, created_at FROM profiles WHERE lower(name) = lower(?)",
+                (name,),
+            ).fetchone()
+
+        if row is None:
+            msg = f"No profile named {name!r}."
+            raise UnknownProfileError(msg)
+        return self._row_to_profile(row)
+
+    def list(self) -> list[Profile]:
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT name, birthdate, created_at FROM profiles ORDER BY lower(name)"
+            ).fetchall()
+        return [self._row_to_profile(row) for row in rows]
+
+    def delete(self, name: str) -> None:
+        with self._connect() as connection:
+            cursor = connection.execute(
+                "DELETE FROM profiles WHERE lower(name) = lower(?)",
+                (name,),
+            )
+        if cursor.rowcount == 0:
+            msg = f"No profile named {name!r}."
+            raise UnknownProfileError(msg)
+
+    @staticmethod
+    def _row_to_profile(row: sqlite3.Row) -> Profile:
+        return Profile(
+            name=str(row["name"]),
+            birthdate=date.fromisoformat(str(row["birthdate"])),
+            created_at=datetime.fromisoformat(str(row["created_at"])),
+        )
