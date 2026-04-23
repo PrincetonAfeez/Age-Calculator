@@ -34,3 +34,13 @@ def _from_date(
     registry: ParserRegistry | None = None,
 ) -> Age:
     return age_at(value, reference)
+
+@create_age.register
+def _from_datetime(
+    value: datetime,
+    reference: date | None = None,
+    registry: ParserRegistry | None = None,
+) -> Age:
+    return age_at(value.date(), reference)
+
+
