@@ -68,8 +68,6 @@ class Age:
         msg = f"Unsupported Age format specifier: {spec!r}"
         raise ValueError(msg)
 
-
-
 @dataclass(frozen=True)
 class Profile:
     name: str
