@@ -1,0 +1,13 @@
+from __future__ import annotations
+
+import tomllib
+from dataclasses import dataclass
+from datetime import UTC, date, datetime, tzinfo
+from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+DEFAULT_CONFIG_DIR = Path.home() / ".agecalc"
+DEFAULT_CONFIG_PATH = DEFAULT_CONFIG_DIR / "config.toml"
+DEFAULT_DATABASE_PATH = DEFAULT_CONFIG_DIR / "profiles.sqlite3"
+
+
