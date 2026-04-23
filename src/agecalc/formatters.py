@@ -26,3 +26,12 @@ class OutputFormatter(Protocol):
 
     def format_message(self, message: str) -> str:
         raise NotImplementedError
+
+def _age_dict(age: Age) -> dict[str, int]:
+    return {
+        "years": age.years,
+        "months": age.months,
+        "days": age.days,
+        "total_days": age.total_days,
+        "total_seconds": age.total_seconds,
+    }
