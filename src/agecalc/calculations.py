@@ -118,4 +118,16 @@ def _birthday_stream(birthdate: date, reference: date) -> Iterator[Milestone]:
             )
         years_old += 1
 
+def _day_count_stream(birthdate: date, reference: date) -> Iterator[Milestone]:
+    elapsed_days = (reference - birthdate).days
+    next_day_count = ((elapsed_days // 1000) + 1) * 1000
+    while True:
+        target = birthdate + timedelta(days=next_day_count)
+        yield Milestone(
+            label=f"{next_day_count:,} days old",
+            target_date=target,
+            days_until=(target - reference).days,
+            weekday=day_of_week(target),
+        )
+        next_day_count += 1000
 
