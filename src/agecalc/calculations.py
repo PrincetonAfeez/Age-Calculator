@@ -19,3 +19,6 @@ F = TypeVar("F", bound=Callable[..., object])
 _REFERENCE_DATE: ContextVar[date | None] = ContextVar("agecalc_reference_date", default=None)
 
 
+def current_reference_date() -> date:
+    override = _REFERENCE_DATE.get()
+    return override if override is not None else date.today()
