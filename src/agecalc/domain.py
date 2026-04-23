@@ -69,3 +69,21 @@ class Age:
         raise ValueError(msg)
 
 
+
+@dataclass(frozen=True)
+class Profile:
+    name: str
+    birthdate: date
+    created_at: datetime
+
+    @classmethod
+    def create(cls, name: str, birthdate: date) -> Profile:
+        clean_name = name.strip()
+        if not clean_name:
+            msg = "Profile name cannot be empty."
+            raise ValueError(msg)
+        return cls(
+            name=clean_name,
+            birthdate=birthdate,
+            created_at=datetime.now(UTC),
+        )
