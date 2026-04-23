@@ -58,3 +58,10 @@ def _birthday_in_year(birthdate: date, year: int) -> date:
     except ValueError:
         return date(year, 2, 28)
 
+def _add_months(start: date, months: int) -> date:
+    month_index = start.month - 1 + months
+    year = start.year + month_index // 12
+    month = month_index % 12 + 1
+    day = min(start.day, monthrange(year, month)[1])
+    return date(year, month, day)
+
