@@ -35,3 +35,11 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> Config:
         reference_timezone=str(data.get("reference_timezone", "UTC")),
         database_path=database_path,
     )
+
+def today_in_timezone(timezone_name: str) -> date:
+    active_timezone: tzinfo
+    try:
+        active_timezone = ZoneInfo(timezone_name)
+    except ZoneInfoNotFoundError:
+        active_timezone = UTC
+    return datetime.now(active_timezone).date()
