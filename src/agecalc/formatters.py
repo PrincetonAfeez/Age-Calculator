@@ -35,3 +35,12 @@ def _age_dict(age: Age) -> dict[str, int]:
         "total_days": age.total_days,
         "total_seconds": age.total_seconds,
     }
+
+def _milestone_dict(milestone: Milestone) -> dict[str, str | int]:
+    return {
+        "label": milestone.label,
+        "target_date": milestone.target_date.isoformat(),
+        "days_until": milestone.days_until,
+        "weekday": milestone.weekday,
+    }
+
