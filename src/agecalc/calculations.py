@@ -131,3 +131,33 @@ def _day_count_stream(birthdate: date, reference: date) -> Iterator[Milestone]:
         )
         next_day_count += 1000
 
+
+@validate_not_future
+def milestones(
+    birthdate: date,
+    reference: date | None = None,
+    *,
+    limit: int = 10,
+) -> Iterator[Milestone]:
+    if limit < 1:
+        return
+
+    resolved_reference = reference if reference is not None else current_reference_date()
+    streams = [
+        _birthday_stream(birthdate, resolved_reference),
+        _day_count_stream(birthdate, resolved_reference),
+    ]
+    heap: list[tuple[date, int, Milestone, Iterator[Milestone]]] = []
+    sequence = count()
+
+    for stream in streams:
+        item = next(stream)
+        heapq.heappush(heap, (item.target_date, next(sequence), item, stream))
+
+    yielded = 0
+    while yielded < limit:
+        _, _, item, stream = heapq.heappop(heap)
+        yield item
+        yielded += 1
+        next_item = next(stream)
+        heapq.heappush(heap, (next_item.target_date, next(sequence), next_item, stream))
