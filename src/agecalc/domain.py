@@ -1,3 +1,5 @@
+"""Core domain objects for the age calculator."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -11,6 +13,12 @@ SECONDS_PER_DAY = 24 * 60 * 60
 @total_ordering
 @dataclass(frozen=True, eq=False)
 class Age:
+    """Calendar age plus total elapsed seconds.
+
+    ``years/months/days`` keep the human calendar representation, while
+    ``total_seconds`` gives comparisons a single precise value.
+    """
+
     years: int
     months: int
     days: int
@@ -24,10 +32,19 @@ class Age:
 
     @property
     def total_days(self) -> int:
+        """Whole elapsed days represented by this age."""
+
         return self.total_seconds // SECONDS_PER_DAY
 
     @classmethod
     def from_total_seconds(cls, total_seconds: int) -> Age:
+        """Build a compact duration-like age from seconds.
+
+        A pure second count has no start date, so months and years are only a
+        conventional breakdown here. Calendar-accurate ages are produced by
+        ``age_at``.
+        """
+
         total_days = abs(total_seconds) // SECONDS_PER_DAY
         years, remaining_days = divmod(total_days, 365)
         months, days = divmod(remaining_days, 30)
@@ -68,8 +85,11 @@ class Age:
         msg = f"Unsupported Age format specifier: {spec!r}"
         raise ValueError(msg)
 
+
 @dataclass(frozen=True)
 class Profile:
+    """Saved person/profile in the application domain."""
+
     name: str
     birthdate: date
     created_at: datetime
