@@ -18,3 +18,20 @@ class Config:
     reference_timezone: str = "UTC"
     database_path: Path = DEFAULT_DATABASE_PATH
 
+def load_config(path: Path = DEFAULT_CONFIG_PATH) -> Config:
+    config_path = path.expanduser()
+    if not config_path.exists():
+        return Config()
+
+    with config_path.open("rb") as config_file:
+        data = tomllib.load(config_file)
+
+    database_value = data.get("database_path", DEFAULT_DATABASE_PATH)
+    database_path = Path(str(database_value)).expanduser()
+
+    return Config(
+        preferred_date_format=str(data.get("preferred_date_format", "iso")),
+        output_format=str(data.get("output_format", "plain")),
+        reference_timezone=str(data.get("reference_timezone", "UTC")),
+        database_path=database_path,
+    )
