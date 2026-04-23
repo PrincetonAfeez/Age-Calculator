@@ -1,3 +1,5 @@
+"""Date parsing strategies and registry."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -8,6 +10,7 @@ from agecalc.exceptions import AmbiguousDateError, InvalidDateError
 
 
 class DateParser(Protocol):
+    """Strategy interface for parsing one date format."""
 
     @property
     def name(self) -> str:
@@ -15,9 +18,12 @@ class DateParser(Protocol):
 
     def parse(self, raw_value: str) -> date:
         raise NotImplementedError
+        """Return a date or raise InvalidDateError."""
+
 
 @dataclass(frozen=True)
 class _StrptimeParser:
+    """Base class for parsers that use strptime."""
     name: str
     pattern: str
 
@@ -45,6 +51,8 @@ class EUParser(_StrptimeParser):
 
 
 class ParserRegistry:
+    """Tries parser strategies in order and detects conflicting successes."""
+
     def __init__(self, parsers: list[DateParser]) -> None:
         if not parsers:
             msg = "ParserRegistry needs at least one parser."
@@ -74,7 +82,9 @@ class ParserRegistry:
 
         return next(iter(unique_dates))
 
+
 def default_registry(preferred: str = "iso") -> ParserRegistry:
+    """Return a registry with ISO, US, and EU parsers, prioritizing the preferred format."""
     parser_map: dict[str, DateParser] = {
         "iso": ISOParser(),
         "us": USParser(),
