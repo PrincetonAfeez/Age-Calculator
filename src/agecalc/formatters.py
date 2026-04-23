@@ -1,3 +1,5 @@
+"""Output formatter strategies for the CLI."""
+
 from __future__ import annotations
 
 import json
@@ -9,6 +11,7 @@ from agecalc.domain import Age, Profile
 
 
 class OutputFormatter(Protocol):
+    """Strategy interface for formatting output."""
     def format_age(self, age: Age) -> str:
         raise NotImplementedError
 
@@ -27,7 +30,9 @@ class OutputFormatter(Protocol):
     def format_message(self, message: str) -> str:
         raise NotImplementedError
 
+
 def _age_dict(age: Age) -> dict[str, int]:
+    """Convert an Age to a dictionary."""
     return {
         "years": age.years,
         "months": age.months,
@@ -36,7 +41,9 @@ def _age_dict(age: Age) -> dict[str, int]:
         "total_seconds": age.total_seconds,
     }
 
+
 def _milestone_dict(milestone: Milestone) -> dict[str, str | int]:
+    """Convert a Milestone to a dictionary."""
     return {
         "label": milestone.label,
         "target_date": milestone.target_date.isoformat(),
@@ -44,14 +51,18 @@ def _milestone_dict(milestone: Milestone) -> dict[str, str | int]:
         "weekday": milestone.weekday,
     }
 
+
 def _profile_dict(profile: Profile) -> dict[str, str]:
+    """Convert a Profile to a dictionary."""
     return {
         "name": profile.name,
         "birthdate": profile.birthdate.isoformat(),
         "created_at": profile.created_at.isoformat(),
     }
 
+
 class PlainFormatter:
+    """Plain text formatter for CLI output."""
     def format_age(self, age: Age) -> str:
         return f"Age: {age:ymd} ({age:days} days, {age:seconds} seconds)"
 
@@ -81,7 +92,9 @@ class PlainFormatter:
     def format_message(self, message: str) -> str:
         return message
 
+
 class JSONFormatter:
+    """JSON formatter for CLI output."""
     def format_age(self, age: Age) -> str:
         return json.dumps({"age": _age_dict(age)}, indent=2)
 
@@ -103,7 +116,9 @@ class JSONFormatter:
     def format_message(self, message: str) -> str:
         return json.dumps({"message": message}, indent=2)
 
+
 def formatter_for(name: str) -> OutputFormatter:
+    """Return the appropriate formatter for the given name.""" 
     if name == "json":
         return JSONFormatter()
     return PlainFormatter()
