@@ -1,0 +1,60 @@
+I want to build an Age Calculator with a CLI interface. I want the code to represent the work of a student who has been learning Python and system architecture for 6 months. The app must demonstrate a solid understanding of Python Fundamentals. The entire app must be built in Python and packed with features. 
+
+Features — chosen for what each one proves
+Core domain (demonstrates: OOP, dataclasses, operator overloading, exceptions)
+
+Age class as an immutable @dataclass(frozen=True) with years, months, days, total_seconds
+Operator overloading: __eq__, __lt__, __sub__ (age difference), __repr__, and __format__ supporting custom specs like f"{age:ymd}", f"{age:days}", f"{age:seconds}"
+Custom exception hierarchy: AgeCalcError as base, with InvalidDateError, FutureBirthDateError, UnknownProfileError as children
+functools.singledispatch on the age-creation function to accept str, date, datetime, or tuple inputs — one concept, high signal
+
+Date parsing (demonstrates: strategy pattern, ABCs/Protocols, polymorphism)
+
+DateParser Protocol with concrete implementations: ISOParser, USParser, EUParser
+ParserRegistry that tries each parser in order and returns the first match
+Ambiguity detection: if multiple parsers succeed with different dates, raise AmbiguousDateError
+This one module shows you understand Protocols, polymorphism, and the strategy pattern in a concrete, justified way
+
+Calculation services (demonstrates: generators, decorators, pure functions)
+
+age_at(birthdate, reference_date) — pure function, no I/O, fully tested
+milestones(birthdate) generator yielding upcoming milestones lazily, sorted by date
+@lru_cache decorator on at least one expensive pure calculation (e.g., day-of-week for a date)
+Custom decorator you write yourself: @validate_not_future that wraps functions accepting dates and raises FutureBirthDateError — demonstrates you understand decorators aren't magic
+Context manager with reference_date(some_date): using contextlib.contextmanager — overrides "now" for testable, deterministic calculations
+
+Storage (demonstrates: repository pattern, dependency injection, ABCs)
+
+ProfileRepository ABC with abstract methods save, get, list, delete
+Two implementations: SQLiteProfileRepository and InMemoryProfileRepository
+The in-memory one exists specifically so tests don't hit disk — this is the dependency injection story you tell in the README
+Profile dataclass as the domain object returned by the repo
+Services receive a repository via constructor injection, never instantiate one directly
+
+CLI (demonstrates: argparse, command pattern, separation of concerns)
+
+argparse with subcommands: age, diff, milestones, profile add, profile list
+Command pattern: each subcommand dispatches to a Command class with an execute(args) method, not a big if/elif chain
+OutputFormatter Protocol with PlainFormatter and JSONFormatter implementations, selected by a --format flag
+The CLI layer does only argument parsing and formatting — all logic lives in services. This is the architecture story.
+
+Configuration (demonstrates: pathlib, stdlib fluency)
+
+Config file at ~/.agecalc/config.toml loaded via tomllib (stdlib in 3.11+)
+Defaults: preferred date format, output format, reference timezone name
+pathlib.Path everywhere — no os.path strings
+
+Testing (demonstrates: pytest, fixtures, parametrization, test design)
+
+pytest with fixtures for the in-memory repo and a frozen clock
+Parametrized tests covering date parsing across formats, age calculations across edge cases (today, yesterday, leap day, 1 second before midnight)
+One property-based test using hypothesis: for any valid birthdate d and positive integer n, age_at(d, d + timedelta(days=n)).total_days == n
+Tests organized mirror-style: tests/core/, tests/storage/, tests/cli/
+
+Packaging & tooling (demonstrates: you treat this as real software)
+
+pyproject.toml with dependencies, console entry point, dev dependencies
+ruff configured in pyproject, clean run
+Type hints throughout, mypy runs clean (not --strict, just clean)
+README with: install steps, 3 usage examples, an architecture diagram (ASCII is fine), a "what this demonstrates" section that explicitly names the patterns and concepts
+ARCHITECTURE.md — one page, explains the layering and why. This document is the single highest-leverage artifact for "system architecture student." It tells a reviewer you thought about architecture rather than stumbled into it.
