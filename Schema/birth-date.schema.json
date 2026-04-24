@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/birth-date.schema.json",
+  "title": "Birth Date",
+  "description": "Schema for validating a user's birth date input.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["dateOfBirth"],
+  "properties": {
+    "dateOfBirth": {
+      "type": "string",
+      "format": "date",
+      "description": "The user's date of birth in YYYY-MM-DD format."
+    },
+    "timezone": {
+      "type": "string",
+      "description": "Optional IANA timezone used for date-sensitive calculations.",
+      "default": "UTC",
+      "examples": ["UTC", "America/New_York", "Africa/Lagos"]
+    }
+  },
+  "examples": [
+    {
+      "dateOfBirth": "2000-05-15",
+      "timezone": "UTC"
+    }
+  ]
+}

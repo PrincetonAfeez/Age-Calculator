@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/index.schema.json",
+  "title": "Age Calculator Schema Index",
+  "description": "Collection schema for Age Calculator data objects.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "birthDate": {
+      "$ref": "birth-date.schema.json"
+    },
+    "ageResult": {
+      "$ref": "age-result.schema.json"
+    },
+    "ageCalculation": {
+      "$ref": "age-calculation.schema.json"
+    }
+  }
+}

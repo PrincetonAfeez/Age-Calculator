@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/age-result.schema.json",
+  "title": "Age Result",
+  "description": "Schema for validating calculated age output.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["years", "months", "days", "calculatedAt"],
+  "properties": {
+    "years": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Completed years since birth."
+    },
+    "months": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 11,
+      "description": "Remaining completed months after years are counted."
+    },
+    "days": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 31,
+      "description": "Remaining days after years and months are counted."
+    },
+    "totalDays": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Optional total number of days since birth."
+    },
+    "calculatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the age calculation was made."
+    }
+  },
+  "examples": [
+    {
+      "years": 24,
+      "months": 11,
+      "days": 9,
+      "totalDays": 9101,
+      "calculatedAt": "2026-04-24T12:00:00Z"
+    }
+  ]
+}

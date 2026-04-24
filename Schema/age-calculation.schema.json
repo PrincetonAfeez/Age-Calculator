@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/age-calculation.schema.json",
+  "title": "Age Calculation",
+  "description": "Schema for a complete age calculation record.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["input", "result"],
+  "properties": {
+    "input": {
+      "$ref": "birth-date.schema.json"
+    },
+    "result": {
+      "$ref": "age-result.schema.json"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["success", "error"],
+      "default": "success"
+    },
+    "message": {
+      "type": "string",
+      "description": "Optional success or error message."
+    }
+  },
+  "examples": [
+    {
+      "input": {
+        "dateOfBirth": "2000-05-15",
+        "timezone": "UTC"
+      },
+      "result": {
+        "years": 25,
+        "months": 11,
+        "days": 9,
+        "calculatedAt": "2026-04-24T12:00:00Z"
+      },
+      "status": "success",
+      "message": "Age calculated successfully."
+    }
+  ]
+}
